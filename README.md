@@ -43,31 +43,31 @@ USE spring_angular_ecommerce_2;
  INSERT INTO product (sku, name, description, image_url, active, units_in_stock,
  unit_price, category_id, date_created)
  VALUES ('BOOK-COMIC-1000', 'Superma: Action Comics Volume 5: The House of Kentn', 'The House of Kent, Superman, Superboy, Supergirl, the Legion of Super-Heroes’ Brainiac 5, and Young Justice’s Conner Kent must all unite to face an enemy from another dimension unleashed by the Invisible Mafia! This kind of power can lay waste to an entire family of super-people! All of this plus the future of the Daily Planet revealed!',
- 'assets/images/products/placeholder.png'
+ 'assets/images/products/BOOK-COMIC-1000.jpg'
  ,1,100,12.99,1, NOW());
 
  INSERT INTO product (sku, name, description, image_url, active, units_in_stock,
  unit_price, category_id, date_created)
  VALUES ('BOOK-COMIC-1001', 'Batman: The Silver Age Omnibus Vol. 1 ', 'The Caped Crusader is known for protecting the streets of Gotham from the villains who wish to cause harm. Follow along on some of his most adventurous tales in Batman: The Silver Age Omnibus Vol. 1 collecting Batman #101-116',
- 'assets/images/products/placeholder.png'
+ 'assets/images/products/BOOK-COMIC-1001.jpg'
  ,1,100,99.99,1, NOW());
 
  INSERT INTO product (sku, name, description, image_url, active, units_in_stock,
  unit_price, category_id, date_created)
 VALUES ('BOOK-FICTION-1002', 'The Fifth Science', 'The Fifth Science is a collection of 12 stories, beginning at the start of the Galactic Human Empire and following right through to its final days. We’ll see some untypical things along the way, meet some untypical folk: galactic lighthouses from the distant future, alien tombs from the distant past, murderers, emperors, archaeologists and drunks; mad mathematicians attempting to wake the universe itself up.And when humans have fallen back into savagery, when the secrets of space folding and perfect wisdom are forgotten, we’ll attend the empire’s deathbed, hold its hand as it goes. Unfortunately that may well only be the beginning.',
- 'assets/images/products/placeholder.png'
+ 'assets/images/products/BOOK-FICTION-1002.jpg'
  ,1,100,24.99,2, NOW());
 
  INSERT INTO product (sku, name, description, image_url, active, units_in_stock,
  unit_price, category_id, date_created)
  VALUES ('BOOK-ROMANTIC-1003', 'The Summer House: A gorgeous feel good romance that will have you hooked', 'Just when true happiness seems within reach, Callie and Olivia find a diary full of secrets... secrets that stretch across the island, and have the power to turn lives upside down. As Callie reads, she unravels a mystery that makes her heart drop through the floor. Will Callie and Luke be pulled apart by the storm it unleashes, or can true love save them?',
- 'assets/images/products/placeholder.png'
+ 'assets/images/products/BOOK-ROMANTIC-1003.jpg'
  ,1,100,15.00,3, NOW());
 
  INSERT INTO product (sku, name, description, image_url, active, units_in_stock,
  unit_price, category_id, date_created)
  VALUES ('BOOK-PROGRAMMING-1004', 'The Art of Computer Programming', 'These four books comprise what easily could be the most important set of information on any serious programmer’s bookshelf.',
- 'assets/images/products/placeholder.png'
+ 'assets/images/products/BOOK-PROGRAMMING-1004.jpg'
  ,1,100,187.99,4, NOW());
  
  INSERT INTO product (sku, name, description, image_url, active, units_in_stock,
