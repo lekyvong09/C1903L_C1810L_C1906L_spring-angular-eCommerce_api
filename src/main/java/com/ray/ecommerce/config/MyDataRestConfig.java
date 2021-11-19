@@ -1,7 +1,9 @@
 package com.ray.ecommerce.config;
 
+import com.ray.ecommerce.entity.Country;
 import com.ray.ecommerce.entity.Product;
 import com.ray.ecommerce.entity.ProductCategory;
+import com.ray.ecommerce.entity.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
@@ -30,15 +32,20 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
 
         HttpMethod[] theUnsupportedAction = {HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE};
 
-        config.getExposureConfiguration().forDomainType(Product.class)
-                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedAction))
-                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedAction));
-
-        config.getExposureConfiguration().forDomainType(ProductCategory.class)
-                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedAction))
-                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedAction));
+        disableHttpMethod(ProductCategory.class, config, theUnsupportedAction);
+        disableHttpMethod(Product.class, config, theUnsupportedAction);
+        disableHttpMethod(Country.class, config, theUnsupportedAction);
+        disableHttpMethod(State.class, config, theUnsupportedAction);
 
         config.exposeIdsFor(arrayOfEntities());
+    }
+
+
+    private void disableHttpMethod(Class theClass, RepositoryRestConfiguration config, HttpMethod[] theUnsupportedAction) {
+        config.getExposureConfiguration()
+                .forDomainType(theClass)
+                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedAction))
+                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedAction));
     }
 
     private Class<?>[] arrayOfEntities() {
