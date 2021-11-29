@@ -465,3 +465,90 @@ USE spring_angular_ecommerce_2;
  ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
 ```
+
+# Database User, Role, Privilege
+```
+use spring_angular_ecommerce_2;
+set foreign_key_checks = 0;
+
+drop table if exists authority;
+create table authority (
+    id int(11) NOT NULL AUTO_INCREMENT,
+    privilege varchar(250) NOT NULL,
+    PRIMARY KEY (id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+insert into authority(privilege) values ('user:read'),('user:update'),('user:create'),('user:delete');
+
+
+drop table if exists role;
+create table role (
+    id int(11) NOT NULL AUTO_INCREMENT,
+    name varchar(100) NOT NULL,
+    PRIMARY KEY (id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    
+insert into role(name) values ('ROLE_USER_READ'),('ROLE_USER_EDIT'),('ROLE_USER_CREATE'),('ROLE_USER_DELETE');
+
+
+drop table if exists role_authority;
+CREATE TABLE role_authority (
+    role_id int(11) default null,
+    authority_id int(11) default null,
+    
+    PRIMARY KEY (role_id, authority_id),
+    KEY FK_USER_idx (role_id),
+    
+	CONSTRAINT FK_role_authority_01 FOREIGN KEY (role_id) REFERENCES role (id) on delete no action on update no action,
+    CONSTRAINT FK_role_authority_02 FOREIGN KEY (authority_id) REFERENCES authority (id) on delete no action on update no action
+) engine=InnoDB auto_increment=1 default charset=utf8mb4;
+
+insert into role_authority(role_id,authority_id) values (1,1),(2,1),(2,2),(3,1),(3,2),(3,3),(4,1),(4,2),(4,3),(4,4);
+
+
+drop table if exists user;
+create table user (
+    id int(11) NOT NULL AUTO_INCREMENT,
+    user_id varchar(50) NOT NULL,
+    first_name varchar(150) NOT NULL,
+    last_name varchar(150) NOT NULL,
+    username varchar(50) NOT NULL, 
+    password varchar(150) NOT NULL,
+    email varchar(250) NULL,
+    profile_image_url varchar(1250) NULL,
+    last_login_date DATETIME NULL,
+    last_login_date_display DATETIME NULL,
+    join_date DATETIME NULL,
+    is_active tinyint(1) NOT NULL,
+    is_not_locked tinyint(1) NOT NULL,
+    PRIMARY KEY (id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+drop table if exists user_role;
+CREATE TABLE user_role (
+    user_id int(11) default null,
+    role_id int(11) default null,
+    
+    PRIMARY KEY (user_id, role_id),
+    KEY FK_USER_idx (user_id),
+
+	CONSTRAINT FK_user_role_01 FOREIGN KEY (user_id) REFERENCES user (id) on delete no action on update no action,
+    CONSTRAINT FK_user_role_02 FOREIGN KEY (role_id) REFERENCES role (id) on delete no action on update no action
+) engine=InnoDB auto_increment=1 default charset=utf8mb4;
+
+
+drop table if exists user_authority;
+CREATE TABLE user_authority (
+    user_id int(11) default null,
+    authority_id int(11) default null,
+    
+    PRIMARY KEY (user_id, authority_id),
+    KEY FK_USER_idx (user_id),
+
+	CONSTRAINT FK_user_authority_01 FOREIGN KEY (user_id) REFERENCES user (id) on delete no action on update no action,
+    CONSTRAINT FK_user_authority_02 FOREIGN KEY (authority_id) REFERENCES authority (id) on delete no action on update no action
+) engine=InnoDB auto_increment=1 default charset=utf8mb4;
+
+
+set foreign_key_checks = 1;
+```
