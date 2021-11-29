@@ -20,33 +20,46 @@ public class User implements Serializable {
     @Column(name = "user_id")
     private String userId;
 
+    @Column(name = "first_name")
     private String firstName;
 
+    @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "username")
     private String username;
 
+    @Column(name = "password")
     private String password;
 
+    @Column(name = "email")
     private String email;
 
+    @Column(name = "profile_image_url")
     private String profileImageUrl;
 
+    @Column(name = "last_login_date")
     private Date lastLoginDate;
 
+    @Column(name = "last_login_date_display")
     private Date lastLoginDateDisplay;
 
+    @Column(name = "join_date")
     private Date joinDate;
 
-    private String[] roles;
+    @Column(name = "roles")
+    private String[] roles; // Role_User {read}, ROLE_ADMIN {read, update, delete}
 
-    private String[] authorities;
+    @Column(name = "authorities")
+    private String[] authorities; // delete, insert, update, delete
 
+    @Column(name = "is_active")
     private boolean isActive;
 
-    private boolean isNonLocked;
+    @Column(name = "is_not_locked")
+    private boolean isNotLocked;
 
-    public User(Long id, String userId, String firstName, String lastName, String username, String password, String email, String profileImageUrl, Date lastLoginDate, Date lastLoginDateDisplay, Date joinDate, String[] roles, String[] authorities, boolean isActive, boolean isNonLocked) {
+    public User(Long id, String userId, String firstName, String lastName, String username, String password, String email, String profileImageUrl, Date lastLoginDate, Date lastLoginDateDisplay, Date joinDate, String[] roles, String[] authorities, boolean isActive, boolean isNotLocked) {
         this.id = id;
         this.userId = userId;
         this.firstName = firstName;
@@ -61,6 +74,6 @@ public class User implements Serializable {
         this.roles = roles;
         this.authorities = authorities;
         this.isActive = isActive;
-        this.isNonLocked = isNonLocked;
+        this.isNotLocked = isNotLocked;
     }
 }
