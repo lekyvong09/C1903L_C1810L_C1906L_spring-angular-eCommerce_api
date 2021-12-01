@@ -1,5 +1,6 @@
 package com.ray.ecommerce.controller;
 
+import com.ray.ecommerce.constant.SecurityConstant;
 import com.ray.ecommerce.domain.User;
 import com.ray.ecommerce.domain.UserPrincipal;
 import com.ray.ecommerce.service.UserService;
@@ -34,7 +35,7 @@ public class UserController {
 
         // return JSON WebToken
         HttpHeaders jwtTokenHeader = new HttpHeaders();
-        jwtTokenHeader.add("Jwt-Token", jwtTokenProvider.generateJwtToken(userPrincipal));
+        jwtTokenHeader.add(SecurityConstant.JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(userPrincipal));
 
         return new ResponseEntity<>(loginUser, jwtTokenHeader, HttpStatus.OK);
     }
