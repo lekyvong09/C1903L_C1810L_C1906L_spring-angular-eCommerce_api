@@ -4,20 +4,31 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.Arrays.stream;
 
 public class UserPrincipal implements UserDetails {
 
     private User user;
 
+    public UserPrincipal() { }
+
+    public UserPrincipal(User user) {
+        this.user = user;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return stream(this.user.getAuthorities()).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        List<Role> roleList = user.getRoles();
+
+        List<GrantedAuthority> grantedAuthorityList = roleList.stream()
+                .flatMap(au -> au.getAuthorities().stream())
+                .map(Authority::getPrivilege).distinct()
+                .map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+
+        return grantedAuthorityList;
     }
 
     @Override

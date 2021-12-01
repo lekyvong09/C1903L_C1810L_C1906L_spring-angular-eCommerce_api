@@ -6,17 +6,19 @@ import com.ray.ecommerce.constant.SecurityConstant;
 import com.ray.ecommerce.domain.UserPrincipal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Component
 public class JWTTokenProvider {
 
     @Value("${jwt.secret}")
     private String secret;
 
-    private String generateJwtToken(UserPrincipal userPrincipal) {
+    public String generateJwtToken(UserPrincipal userPrincipal) {
         String[] claims = getClaimsFromUser(userPrincipal);
 
         return JWT.create()
