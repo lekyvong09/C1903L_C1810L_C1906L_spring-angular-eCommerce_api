@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -47,19 +48,24 @@ public class User implements Serializable {
     @Column(name = "join_date")
     private Date joinDate;
 
-    @Column(name = "roles")
-    private String[] roles; // Role_User {read}, ROLE_ADMIN {read, update, delete}
-
-    @Column(name = "authorities")
-    private String[] authorities; // delete, insert, update, delete
-
     @Column(name = "is_active")
     private boolean isActive;
 
     @Column(name = "is_not_locked")
     private boolean isNotLocked;
 
-    public User(Long id, String userId, String firstName, String lastName, String username, String password, String email, String profileImageUrl, Date lastLoginDate, Date lastLoginDateDisplay, Date joinDate, String[] roles, String[] authorities, boolean isActive, boolean isNotLocked) {
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private List<Role> roles; // Role_User {read}, ROLE_ADMIN {read, update, delete}
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name = "user_authority", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "authority_id"))
+    private List<Authority> authorities; // delete, insert, update, delete
+
+
+    public User() { }
+
+    public User(Long id, String userId, String firstName, String lastName, String username, String password, String email, String profileImageUrl, Date lastLoginDate, Date lastLoginDateDisplay, Date joinDate, boolean isActive, boolean isNotLocked, List<Role> roles, List<Authority> authorities) {
         this.id = id;
         this.userId = userId;
         this.firstName = firstName;
@@ -71,9 +77,9 @@ public class User implements Serializable {
         this.lastLoginDate = lastLoginDate;
         this.lastLoginDateDisplay = lastLoginDateDisplay;
         this.joinDate = joinDate;
-        this.roles = roles;
-        this.authorities = authorities;
         this.isActive = isActive;
         this.isNotLocked = isNotLocked;
+        this.roles = roles;
+        this.authorities = authorities;
     }
 }
