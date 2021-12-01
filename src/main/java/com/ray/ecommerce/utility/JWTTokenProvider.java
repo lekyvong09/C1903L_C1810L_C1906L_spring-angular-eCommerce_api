@@ -2,6 +2,7 @@ package com.ray.ecommerce.utility;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.ray.ecommerce.constant.SecurityConstant;
 import com.ray.ecommerce.domain.UserPrincipal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,12 +20,12 @@ public class JWTTokenProvider {
         String[] claims = getClaimsFromUser(userPrincipal);
 
         return JWT.create()
-                .withIssuer("Ray LTD")
-                .withAudience("eCommerce portal")
+                .withIssuer(SecurityConstant.COMPANY)
+                .withAudience(SecurityConstant.APPLICATION_NAME)
                 .withIssuedAt(new Date())
                 .withSubject(userPrincipal.getUsername())
-                .withArrayClaim("authorities", claims)
-                .withExpiresAt(new Date(System.currentTimeMillis() + 432000000))
+                .withArrayClaim(SecurityConstant.AUTHORITIES, claims)
+                .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstant.EXPIRATION_TIME))
                 .sign(Algorithm.HMAC512(secret.getBytes()));
     }
 
