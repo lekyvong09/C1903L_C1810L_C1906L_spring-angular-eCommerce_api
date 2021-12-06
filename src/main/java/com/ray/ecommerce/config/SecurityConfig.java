@@ -1,5 +1,7 @@
 package com.ray.ecommerce.config;
 
+import com.ray.ecommerce.constant.SecurityConstant;
+import com.ray.ecommerce.filter.JwtAccessDeniedHandler;
 import com.ray.ecommerce.filter.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,6 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private JwtAuthorizationFilter jwtAuthorizationFilter;
+    private JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Autowired
     public SecurityConfig(@Qualifier("myUserDetailsService")UserDetailsService userDetailsService,
@@ -46,8 +49,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .authorizeRequests()
-                        .antMatchers("/api/user/login").permitAll()
+                        .antMatchers(SecurityConstant.PUBLIC_URLS).permitAll()
                         .anyRequest().authenticated()
+                .and()
+                    .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)
                 .and()
                     .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
     }
