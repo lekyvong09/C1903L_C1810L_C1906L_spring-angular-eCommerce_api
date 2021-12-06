@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin("http://localhost:4200")
@@ -18,16 +20,19 @@ public class UserController {
 
     private UserService userService;
     private JWTTokenProvider jwtTokenProvider;
+    private AuthenticationManager authenticationManager;
 
     @Autowired
-    public UserController(UserService userService, JWTTokenProvider jwtTokenProvider) {
+    public UserController(UserService userService, JWTTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager) {
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody User user) {
         // authenticate user
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 
         // create userPrincipal
         User loginUser = userService.findUserByUsername(user.getUsername());
