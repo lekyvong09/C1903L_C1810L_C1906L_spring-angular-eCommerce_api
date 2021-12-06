@@ -5,6 +5,9 @@ import com.ray.ecommerce.utility.JWTTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -13,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 
 @Component
@@ -40,9 +44,18 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             // get token
             String token = authorizationHeader.substring(SecurityConstant.TOKEN_PREFIX.length());
             // get username from Token
+            String username = jwtTokenProvider.getSubject(token);
+
             // validate token
-            // get privilege from token
-            // set privilege
+            if (jwtTokenProvider.isTokenValid(username, token)) {
+                // get privilege from token
+                List<GrantedAuthority> authorities = jwtTokenProvider.getAuthoritiesFromToken(token);
+                // set privilege -> SecurityContext
+                Authentication authentication = jwtTokenProvider.getAuthentication(username, authorities, request);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                SecurityContextHolder.clearContext();
+            }
         }
 
         filterChain.doFilter(request, response);

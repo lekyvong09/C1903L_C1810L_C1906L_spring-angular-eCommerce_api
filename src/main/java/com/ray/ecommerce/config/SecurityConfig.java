@@ -1,5 +1,6 @@
 package com.ray.ecommerce.config;
 
+import com.ray.ecommerce.filter.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -20,12 +22,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private JwtAuthorizationFilter jwtAuthorizationFilter;
 
     @Autowired
     public SecurityConfig(@Qualifier("myUserDetailsService")UserDetailsService userDetailsService,
-                          BCryptPasswordEncoder bCryptPasswordEncoder) {
+                          BCryptPasswordEncoder bCryptPasswordEncoder,
+                          JwtAuthorizationFilter jwtAuthorizationFilter) {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.jwtAuthorizationFilter = jwtAuthorizationFilter;
     }
 
     @Override
@@ -41,7 +46,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .authorizeRequests()
-                        .anyRequest().permitAll();
+                        .antMatchers("/api/user/login").permitAll()
+                        .anyRequest().authenticated()
+                .and()
+                    .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
 
