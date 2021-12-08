@@ -3,6 +3,8 @@ package com.ray.ecommerce.controller;
 import com.ray.ecommerce.constant.SecurityConstant;
 import com.ray.ecommerce.domain.User;
 import com.ray.ecommerce.domain.UserPrincipal;
+import com.ray.ecommerce.exception.EmailExistException;
+import com.ray.ecommerce.exception.UsernameExistException;
 import com.ray.ecommerce.service.UserService;
 import com.ray.ecommerce.utility.JWTTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,5 +45,12 @@ public class UserController {
         jwtTokenHeader.add(SecurityConstant.JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(userPrincipal));
 
         return new ResponseEntity<>(loginUser, jwtTokenHeader, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@RequestBody User user) throws EmailExistException, UsernameExistException {
+        User newUser = userService.register(user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail());
+        return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
 }
