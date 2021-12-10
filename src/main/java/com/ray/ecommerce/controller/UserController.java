@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Set;
 
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
@@ -65,6 +67,14 @@ public class UserController {
     public ResponseEntity<User> register(@RequestBody User user) throws EmailExistException, UsernameExistException {
         User newUser = userService.register(user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail());
         return new ResponseEntity<>(newUser, HttpStatus.OK);
+    }
+
+    // display profile Image
+    @GetMapping(path = "/image/{username}/{fileName}", produces = IMAGE_JPEG_VALUE)
+    public byte[] getProfileImage(@PathVariable("username") String username, @PathVariable("fileName") String fileName)
+            throws IOException {
+        // /user/ray/springAngularEcommerce2/users/
+        return Files.readAllBytes(Paths.get(FileConstant.USER_FOLDER + username + "/" + fileName));
     }
 
     @GetMapping(path = "/image/profile/{username}", produces = IMAGE_JPEG_VALUE)
@@ -117,6 +127,7 @@ public class UserController {
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
+    @PostMapping("/updateProfileImage")
     public ResponseEntity<User> updateProfileImage(@RequestParam("profileImage") MultipartFile profileImage)
             throws EmailExistException, IOException, UsernameExistException, NotAnImageFileException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
