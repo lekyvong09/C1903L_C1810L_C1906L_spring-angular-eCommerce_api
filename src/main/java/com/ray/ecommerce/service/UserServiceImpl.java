@@ -8,6 +8,7 @@ import com.ray.ecommerce.domain.Role;
 import com.ray.ecommerce.domain.User;
 import com.ray.ecommerce.domain.UserPrincipal;
 import com.ray.ecommerce.exception.EmailExistException;
+import com.ray.ecommerce.exception.EmailNotFoundException;
 import com.ray.ecommerce.exception.NotAnImageFileException;
 import com.ray.ecommerce.exception.UsernameExistException;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -174,6 +175,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user = validateNewUsernameAndEmail(username, null, null);
         saveProfileImage(user, profileImage);
         return user;
+    }
+
+    @Override
+    public void resetPassword(String email) throws EmailNotFoundException {
+        User user = userRepository.findUserByEmail(email);
+
+        if (user == null)
+            throw  new EmailNotFoundException("No user found for the email " + email);
+
+        String password = RandomStringUtils.randomAlphanumeric(10);
+        String encodedPassword = bCryptPasswordEncoder.encode(password);
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
+        LOGGER.info("User password: " + password);
     }
 
     private void saveProfileImage(User user, MultipartFile profileImage) throws NotAnImageFileException, IOException {
