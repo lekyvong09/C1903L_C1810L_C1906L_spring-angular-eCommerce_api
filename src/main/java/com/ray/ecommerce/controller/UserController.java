@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -97,5 +98,29 @@ public class UserController {
         User newUser = userService.addNewUser(firstName, lastName, username, email, role.toArray(new String[0]),
                 Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive), profileImage);
         return new ResponseEntity<>(newUser, HttpStatus.OK);
+    }
+
+    @PostMapping("/update")
+    public  ResponseEntity<User> updateUser(@RequestParam("currentUsername") String currentUsername,
+                                            @RequestParam("firstName") String firstName,
+                                            @RequestParam("lastName") String lastName,
+                                            @RequestParam("username") String username,
+                                            @RequestParam("email") String email,
+                                            @RequestParam("role") Set<String> role,
+                                            @RequestParam("isActive") String isActive,
+                                            @RequestParam("isActive") String isNonLocked,
+                                            @RequestParam(value="profileImage", required = false) MultipartFile profileImage)
+            throws EmailExistException, IOException, UsernameExistException, NotAnImageFileException {
+
+        User updatedUser = userService.updateUser(currentUsername, firstName, lastName, username, email, role.toArray(new String[0]),
+                Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive), profileImage);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    }
+
+    public ResponseEntity<User> updateProfileImage(@RequestParam("profileImage") MultipartFile profileImage)
+            throws EmailExistException, IOException, UsernameExistException, NotAnImageFileException {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.updateProfileImage(username, profileImage);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 }

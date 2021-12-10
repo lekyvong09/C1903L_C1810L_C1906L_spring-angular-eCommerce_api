@@ -142,6 +142,40 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return user;
     }
 
+    @Override
+    public User updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail,
+                           String[] role, boolean isNonLocked, boolean isActive, MultipartFile profileImage)
+            throws EmailExistException, UsernameExistException, IOException, NotAnImageFileException {
+
+        User currentUser = validateNewUsernameAndEmail(currentUsername, newUsername, newEmail);
+
+        currentUser.setUserId(RandomStringUtils.randomNumeric(10));
+        currentUser.setFirstName(newFirstName);
+        currentUser.setLastName(newLastName);
+        currentUser.setUsername(newUsername);
+        currentUser.setEmail(newEmail);
+        currentUser.setActive(isActive);
+        currentUser.setNotLocked(isNonLocked);
+        currentUser.setRoles(Arrays.stream(role).map(r -> roleRepository.findByName(r)).collect(Collectors.toSet()));
+        currentUser.setAuthorities(Arrays.stream(role).map(r -> roleRepository.findByName(r))
+                .flatMap(ro -> ro.getAuthorities().stream()).collect(Collectors.toSet()));
+
+        userRepository.save(currentUser);
+
+        // http://localhost:8080/api/user/image/{username}/{fileName.jpg} => /user/ray/springAngularEcommerce/users/{username}/{fileName.jpg}
+        saveProfileImage(currentUser, profileImage);
+
+        return currentUser;
+    }
+
+    @Override
+    public User updateProfileImage(String username, MultipartFile profileImage)
+            throws EmailExistException, UsernameExistException, IOException, NotAnImageFileException {
+        User user = validateNewUsernameAndEmail(username, null, null);
+        saveProfileImage(user, profileImage);
+        return user;
+    }
+
     private void saveProfileImage(User user, MultipartFile profileImage) throws NotAnImageFileException, IOException {
         if (profileImage != null) {
             if (!Arrays.asList(MimeTypeUtils.IMAGE_JPEG_VALUE, MimeTypeUtils.IMAGE_GIF_VALUE, MimeTypeUtils.IMAGE_PNG_VALUE).contains(profileImage.getContentType())) {
