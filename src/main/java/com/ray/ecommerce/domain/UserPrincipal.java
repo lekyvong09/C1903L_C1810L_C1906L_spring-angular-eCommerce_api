@@ -21,9 +21,8 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<Role> roleList = user.getRoles();
 
-        List<GrantedAuthority> grantedAuthorityList = roleList.stream()
+        List<GrantedAuthority> grantedAuthorityList = user.getRoles().stream()
                 .flatMap(au -> au.getAuthorities().stream())
                 .map(Authority::getPrivilege).distinct()
                 .map(SimpleGrantedAuthority::new).collect(Collectors.toList());

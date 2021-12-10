@@ -69,8 +69,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setPassword(encodedPassword);
         user.setActive(true);
         user.setNotLocked(true);
-        user.setRoles(Arrays.asList(roleRepository.findByName("ROLE_USER_READ")));
-        user.setAuthorities(roleRepository.findByName("ROLE_USER_READ").getAuthorities().stream().distinct().collect(Collectors.toList()));
+        user.setRoles(Stream.of(roleRepository.findByName("ROLE_USER_READ")).collect(Collectors.toSet()));
+        user.setAuthorities(roleRepository.findByName("ROLE_USER_READ").getAuthorities().stream().distinct().collect(Collectors.toSet()));
         user.setProfileImageUrl(
             // http://localhost:8080/api/user/image/profile/{username}  => https://robohash.org/{username}
             ServletUriComponentsBuilder.fromCurrentContextPath().path(FileConstant.DEFAULT_USER_IMAGE_PATH + username).toUriString()
@@ -109,10 +109,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             if (currentUser == null) {
                 throw new UsernameNotFoundException("No user found by user " + currentUsername);
             }
-            if (newUserByUsername != null && currentUser.getId().equals(newUserByUsername.getId())) {
+            if (newUserByUsername != null && !currentUser.getId().equals(newUserByUsername.getId())) {
                 throw new UsernameExistException("Username already exist");
             }
-            if (newUserByEmail != null && currentUser.getId().equals(newUserByEmail.getId())) {
+            if (newUserByEmail != null && !currentUser.getId().equals(newUserByEmail.getId())) {
                 throw new EmailExistException("Email already exist");
             }
             return currentUser;

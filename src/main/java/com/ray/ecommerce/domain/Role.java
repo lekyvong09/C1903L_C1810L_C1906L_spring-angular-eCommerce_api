@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "role")
@@ -23,5 +24,6 @@ public class Role {
     @JoinTable(name = "role_authority",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id"))
-    private List<Authority> authorities;
+    private Set<Authority> authorities;
+
 }
