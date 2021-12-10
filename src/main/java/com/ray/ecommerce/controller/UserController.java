@@ -5,6 +5,7 @@ import com.ray.ecommerce.constant.SecurityConstant;
 import com.ray.ecommerce.domain.User;
 import com.ray.ecommerce.domain.UserPrincipal;
 import com.ray.ecommerce.exception.EmailExistException;
+import com.ray.ecommerce.exception.NotAnImageFileException;
 import com.ray.ecommerce.exception.UsernameExistException;
 import com.ray.ecommerce.service.UserService;
 import com.ray.ecommerce.utility.JWTTokenProvider;
@@ -15,12 +16,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Set;
 
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
@@ -80,5 +83,19 @@ public class UserController {
         return byteArrayOutputStream.toByteArray();
     }
 
+    @PostMapping("/add")
+    public  ResponseEntity<User> addNewUser(@RequestParam("firstName") String firstName,
+                                            @RequestParam("lastName") String lastName,
+                                            @RequestParam("username") String username,
+                                            @RequestParam("email") String email,
+                                            @RequestParam("role") Set<String> role,
+                                            @RequestParam("isActive") String isActive,
+                                            @RequestParam("isActive") String isNonLocked,
+                                            @RequestParam(value="profileImage", required = false) MultipartFile profileImage)
+            throws EmailExistException, IOException, UsernameExistException, NotAnImageFileException {
 
+        User newUser = userService.addNewUser(firstName, lastName, username, email, role.toArray(new String[0]),
+                Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive), profileImage);
+        return new ResponseEntity<>(newUser, HttpStatus.OK);
+    }
 }

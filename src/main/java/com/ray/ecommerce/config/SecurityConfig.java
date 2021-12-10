@@ -56,13 +56,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .authorizeRequests()
                         .antMatchers(SecurityConstant.PUBLIC_URLS).permitAll()
-                        .anyRequest().authenticated()
-//                        .anyRequest().permitAll();
-                .and()
-                    .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)
-                    .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .and()
-                    .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+                        .anyRequest().permitAll();
+//                        .anyRequest().authenticated()
+//                .and()
+//                    .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)
+//                    .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+//                .and()
+//                    .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
 
