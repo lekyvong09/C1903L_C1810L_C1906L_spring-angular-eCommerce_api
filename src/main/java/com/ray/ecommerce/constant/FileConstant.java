@@ -12,7 +12,5 @@ public class FileConstant {
     // /user/ray/springAngularEcommerce2/users/
     public static final String USER_FOLDER = System.getProperty("user.home") + "/springAngularEcommerce2/users/";
 
-    public static final String DOT = ".";
-    public static final String FORWARD_SLASH = "/";
 
 }

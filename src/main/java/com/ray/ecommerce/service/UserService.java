@@ -1,10 +1,7 @@
 package com.ray.ecommerce.service;
 
 import com.ray.ecommerce.domain.User;
-import com.ray.ecommerce.exception.EmailExistException;
-import com.ray.ecommerce.exception.EmailNotFoundException;
-import com.ray.ecommerce.exception.NotAnImageFileException;
-import com.ray.ecommerce.exception.UsernameExistException;
+import com.ray.ecommerce.exception.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -24,4 +21,6 @@ public interface UserService {
     User updateProfileImage(String username, MultipartFile profileImage) throws EmailExistException, UsernameExistException, IOException, NotAnImageFileException;
 
     void resetPassword(String email) throws EmailNotFoundException;
+
+    void deleteUser(long id) throws UserNotFoundException, IOException;
 }

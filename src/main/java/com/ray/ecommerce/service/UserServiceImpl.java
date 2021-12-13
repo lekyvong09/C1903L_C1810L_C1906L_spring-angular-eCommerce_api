@@ -7,12 +7,10 @@ import com.ray.ecommerce.domain.Authority;
 import com.ray.ecommerce.domain.Role;
 import com.ray.ecommerce.domain.User;
 import com.ray.ecommerce.domain.UserPrincipal;
-import com.ray.ecommerce.exception.EmailExistException;
-import com.ray.ecommerce.exception.EmailNotFoundException;
-import com.ray.ecommerce.exception.NotAnImageFileException;
-import com.ray.ecommerce.exception.UsernameExistException;
+import com.ray.ecommerce.exception.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.transaction.Transactional;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -189,6 +188,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setPassword(encodedPassword);
         userRepository.save(user);
         LOGGER.info("User password: " + password);
+    }
+
+    @Override
+    public void deleteUser(long id) throws UserNotFoundException, IOException {
+        if (!userRepository.existsById(id)) {
+            throw new UserNotFoundException("User does not exist");
+        }
+        User user = userRepository.findById(id).get();
+        Path userFolder = Paths.get(FileConstant.USER_FOLDER + user.getUsername()).toAbsolutePath().normalize();
+        FileUtils.deleteDirectory(new File(userFolder.toString()));
+        userRepository.deleteById(id);
     }
 
     private void saveProfileImage(User user, MultipartFile profileImage) throws NotAnImageFileException, IOException {

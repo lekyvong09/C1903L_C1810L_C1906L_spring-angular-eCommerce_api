@@ -2,10 +2,13 @@ package com.ray.ecommerce.controller;
 
 import com.ray.ecommerce.constant.FileConstant;
 import com.ray.ecommerce.constant.SecurityConstant;
+import com.ray.ecommerce.dao.UserRepository;
+import com.ray.ecommerce.domain.HttpResponse;
 import com.ray.ecommerce.domain.User;
 import com.ray.ecommerce.domain.UserPrincipal;
 import com.ray.ecommerce.exception.EmailExistException;
 import com.ray.ecommerce.exception.NotAnImageFileException;
+import com.ray.ecommerce.exception.UserNotFoundException;
 import com.ray.ecommerce.exception.UsernameExistException;
 import com.ray.ecommerce.service.UserService;
 import com.ray.ecommerce.utility.JWTTokenProvider;
@@ -26,6 +29,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Set;
 
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
@@ -38,12 +42,15 @@ public class UserController {
     private UserService userService;
     private JWTTokenProvider jwtTokenProvider;
     private AuthenticationManager authenticationManager;
+    private UserRepository userRepository;
 
     @Autowired
-    public UserController(UserService userService, JWTTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager) {
+    public UserController(UserService userService, JWTTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager,
+                          UserRepository userRepository) {
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
         this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/login")
@@ -133,5 +140,30 @@ public class UserController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.updateProfileImage(username, profileImage);
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/find/{username}")
+    public ResponseEntity<User> getUser(@PathVariable("username") String username) {
+        User user = userService.findUserByUsername(username);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("id") Long id) throws UserNotFoundException, IOException {
+        userService.deleteUser(id);
+        return response(HttpStatus.OK, "User has been deleted successfully");
+    }
+
+
+    private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
+        return new ResponseEntity<>(new HttpResponse(httpStatus.value(),
+                httpStatus, httpStatus.getReasonPhrase(), message), httpStatus);
     }
 }
