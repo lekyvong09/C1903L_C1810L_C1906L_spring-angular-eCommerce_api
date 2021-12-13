@@ -49,15 +49,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private RoleRepository roleRepository;
     private LoginAttemptService loginAttemptService;
+    private EmailService emailService;
 
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder,
-                           RoleRepository roleRepository, LoginAttemptService loginAttemptService) {
+                           RoleRepository roleRepository, LoginAttemptService loginAttemptService, EmailService emailService) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.roleRepository = roleRepository;
         this.loginAttemptService = loginAttemptService;
+        this.emailService = emailService;
     }
 
     @Override
@@ -90,6 +92,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         User newUser = userRepository.save(user);
         LOGGER.info("New user password: " + password);
+        emailService.sendSimpleMessage(email,
+                "Your registration has been completed",
+                "Hello " + firstName +
+                "\n\nYour login password is " + password +
+                "\n\nThe Support Team");
         return newUser;
     }
 
