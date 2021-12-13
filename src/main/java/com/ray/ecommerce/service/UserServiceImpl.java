@@ -8,6 +8,7 @@ import com.ray.ecommerce.domain.Role;
 import com.ray.ecommerce.domain.User;
 import com.ray.ecommerce.domain.UserPrincipal;
 import com.ray.ecommerce.exception.*;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
@@ -47,14 +48,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private UserRepository userRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private RoleRepository roleRepository;
+    private LoginAttemptService loginAttemptService;
 
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder,
-                           RoleRepository roleRepository) {
+                           RoleRepository roleRepository, LoginAttemptService loginAttemptService) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.roleRepository = roleRepository;
+        this.loginAttemptService = loginAttemptService;
     }
 
     @Override
@@ -91,6 +94,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
 
+    @SneakyThrows
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findUserByUsername(username);
@@ -98,6 +102,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found by username: " + username);
         } else {
+
+            if (user.isNotLocked()) {
+                // check number of attempts and lock if exceed the maximum
+                if (loginAttemptService.hasExceededMaxAttempts(user.getUsername())) {
+                    user.setNotLocked(false);
+                } else {
+                    user.setNotLocked(true);
+                }
+            } else {
+                loginAttemptService.evictUserFromLoginAttemptCache(user.getUsername());
+            }
+
             user.setLastLoginDateDisplay(user.getLastLoginDate());
             user.setLastLoginDate(new Date());
             userRepository.save(user);
