@@ -105,7 +105,7 @@ public class UserController {
                                             @RequestParam("email") String email,
                                             @RequestParam("role") Set<String> role,
                                             @RequestParam("isActive") String isActive,
-                                            @RequestParam("isActive") String isNonLocked,
+                                            @RequestParam("isNonLocked") String isNonLocked,
                                             @RequestParam(value="profileImage", required = false) MultipartFile profileImage)
             throws EmailExistException, IOException, UsernameExistException, NotAnImageFileException {
 
@@ -122,7 +122,7 @@ public class UserController {
                                             @RequestParam("email") String email,
                                             @RequestParam("role") Set<String> role,
                                             @RequestParam("isActive") String isActive,
-                                            @RequestParam("isActive") String isNonLocked,
+                                            @RequestParam("isNonLocked") String isNonLocked,
                                             @RequestParam(value="profileImage", required = false) MultipartFile profileImage)
             throws EmailExistException, IOException, UsernameExistException, NotAnImageFileException {
 
