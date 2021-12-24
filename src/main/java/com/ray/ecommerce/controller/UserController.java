@@ -6,10 +6,14 @@ import com.ray.ecommerce.dao.UserRepository;
 import com.ray.ecommerce.domain.HttpResponse;
 import com.ray.ecommerce.domain.User;
 import com.ray.ecommerce.domain.UserPrincipal;
+import com.ray.ecommerce.entity.PageInfo;
 import com.ray.ecommerce.exception.*;
 import com.ray.ecommerce.service.UserService;
 import com.ray.ecommerce.utility.JWTTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +30,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
@@ -147,9 +153,18 @@ public class UserController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> getAllUsers(@RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue= "3") int size) {
+        Pageable paging = PageRequest.of(page, size);
+        Page<User> users = userRepository.findAll(paging);
+
+        PageInfo myPage = new PageInfo(users.getNumber(), users.getTotalElements(), users.getTotalPages(), users.getSize());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("users", users);
+        response.put("page", myPage);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
