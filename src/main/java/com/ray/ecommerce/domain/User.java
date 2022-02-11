@@ -1,14 +1,13 @@
 package com.ray.ecommerce.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ray.ecommerce.entity.Order;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "user")
@@ -64,6 +63,8 @@ public class User implements Serializable {
     @JoinTable(name = "user_authority", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "authority_id"))
     private Set<Authority> authorities; // delete, insert, update, delete
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private Set<Order> orders;
 
     public User() { }
 
@@ -83,5 +84,15 @@ public class User implements Serializable {
         this.isNotLocked = isNotLocked;
         this.roles = roles;
         this.authorities = authorities;
+    }
+
+    public void add(Order order) {
+        if (order != null) {
+            if (orders == null) {
+                orders = new HashSet<>();
+            }
+            orders.add(order);
+            order.setUser(this);
+        }
     }
 }
