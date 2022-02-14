@@ -556,7 +556,7 @@ set foreign_key_checks = 1;
 
 # Database - Replace Customer table with User
 ```
-USE spring_angular_ecommerce;
+USE spring_angular_ecommerce_2;
 
  --
  -- Prep work
@@ -620,4 +620,9 @@ USE spring_angular_ecommerce;
    CONSTRAINT FK_order_id FOREIGN KEY (order_id) REFERENCES orders (id),
    CONSTRAINT FK_product_id FOREIGN KEY (product_id) REFERENCES product (id)
  ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+```
+
+### Database - Add column isFavorite to Product table
+```
+ ALTER TABLE spring_angular_ecommerce.product ADD COLUMN is_favorite BIT DEFAULT 0;
 ```

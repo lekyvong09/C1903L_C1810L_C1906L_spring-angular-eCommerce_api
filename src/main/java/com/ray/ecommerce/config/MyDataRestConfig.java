@@ -33,7 +33,7 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
         HttpMethod[] theUnsupportedAction = {HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE};
 
         disableHttpMethod(ProductCategory.class, config, theUnsupportedAction);
-        disableHttpMethod(Product.class, config, theUnsupportedAction);
+//        disableHttpMethod(Product.class, config, theUnsupportedAction);
         disableHttpMethod(Country.class, config, theUnsupportedAction);
         disableHttpMethod(State.class, config, theUnsupportedAction);
 
