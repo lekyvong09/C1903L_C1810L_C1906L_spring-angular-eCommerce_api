@@ -39,7 +39,7 @@ public class Product {
     @Column(name = "units_in_stock")
     private int unitsInStock;
 
-    @Column(name = "date_created")
+    @Column(name = "date_created", updatable = false)
     @CreationTimestamp
     private Date dateCreated;
 
