@@ -1,5 +1,6 @@
 package com.ray.ecommerce.service;
 
+import com.ray.ecommerce.dao.OrderRepository;
 import com.ray.ecommerce.dao.UserRepository;
 import com.ray.ecommerce.domain.User;
 import com.ray.ecommerce.dto.Purchase;
@@ -17,10 +18,12 @@ import java.util.UUID;
 public class CheckoutServiceImpl implements CheckoutService{
 
     private UserRepository userRepository;
+    private OrderRepository orderRepository;
 
     @Autowired
-    public CheckoutServiceImpl(UserRepository userRepository) {
+    public CheckoutServiceImpl(UserRepository userRepository, OrderRepository orderRepository) {
         this.userRepository = userRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Transactional
@@ -50,8 +53,9 @@ public class CheckoutServiceImpl implements CheckoutService{
         user.add(order);
 
         // save
-        userRepository.save(user);
+//        userRepository.save(user);
+        Order insertedOrder = orderRepository.save(order);
 
-        return new PurchaseResponse(orderTrackingNumber);
+        return new PurchaseResponse(orderTrackingNumber, insertedOrder.getDateCreated());
     }
 }
